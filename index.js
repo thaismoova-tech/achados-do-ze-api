@@ -16,8 +16,11 @@ app.get("/shopee/ferramentas", async (req, res) => {
       "https://shopee.com.br/api/v4/search/search_items?by=relevancy&keyword=ferramentas&limit=5&page_type=search&scenario=PAGE_GLOBAL_SEARCH&version=2",
       {
         headers: {
-          "User-Agent": "Mozilla/5.0",
-          "Accept": "application/json"
+      "User-Agent": "Mozilla/5.0",
+      "Accept": "application/json",
+      "Referer": "https://shopee.com.br/",
+      "Accept-Language": "pt-BR,pt;q=0.9",
+      "x-api-source": "pc"
         }
       }
     );
@@ -32,8 +35,10 @@ app.get("/shopee/ferramentas", async (req, res) => {
     }));
 
     res.json(items);
-  } catch (error) {
-    res.status(500).json({ error: "Erro ao buscar dados da Shopee" });
+} catch (error) {
+  console.error(error);
+  res.status(500).json({ error: "Erro ao buscar dados da Shopee", details: error.message });
+}
   }
 });
 
