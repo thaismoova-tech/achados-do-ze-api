@@ -1,5 +1,4 @@
 import express from "express";
-import fetch from "node-fetch";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -13,17 +12,21 @@ app.get("/", (req, res) => {
 app.get("/shopee/ferramentas", async (req, res) => {
   try {
     const response = await fetch(
-      "https://shopee.com.br/api/v4/search/search_items?by=relevancy&keyword=ferramentas&limit=5&page_type=search&scenario=PAGE_GLOBAL_SEARCH&version=2",
+      "https://shopee.com.br/api/v4/search/search_items?keyword=ferramentas&limit=5&offset=0&page_type=search&sort_by=relevancy",
       {
         headers: {
-      "User-Agent": "Mozilla/5.0",
-      "Accept": "application/json",
-      "Referer": "https://shopee.com.br/",
-      "Accept-Language": "pt-BR,pt;q=0.9",
-      "x-api-source": "pc"
+          "User-Agent": "Mozilla/5.0",
+          "Accept": "application/json",
+          "Referer": "https://shopee.com.br/",
+          "Accept-Language": "pt-BR,pt;q=0.9",
+          "x-api-source": "pc"
         }
       }
     );
+
+    if (!response.ok) {
+      throw new Error(`Shopee respondeu ${response.status}`);
+    }
 
     const data = await response.json();
 
@@ -35,10 +38,13 @@ app.get("/shopee/ferramentas", async (req, res) => {
     }));
 
     res.json(items);
-} catch (error) {
-  console.error(error);
-  res.status(500).json({ error: "Erro ao buscar dados da Shopee", details: error.message });
-}
+
+  } catch (error) {
+    console.error("Erro Shopee:", error);
+    res.status(500).json({
+      error: "Erro ao buscar dados da Shopee",
+      details: error.message
+    });
   }
 });
 
